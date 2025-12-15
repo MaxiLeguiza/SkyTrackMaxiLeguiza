@@ -1,0 +1,83 @@
+datasource db {
+  provider = "mongodb"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+enum VuelosEstados {
+  PROGRAMADO
+  EMBARCADO
+  EN_VUELO
+  ATERRIZADO
+  CANCELADO
+}
+
+enum AvionEstado {
+  DISPONIBLE
+  EN_VUELO
+  MANTENIMIENTO
+}
+
+enum UserRole {
+  ADMIN
+  OPERADOR
+}
+
+model vuelos {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  origen    String
+  destino   String
+  estado    VuelosEstados
+  deleted   Boolean  @default(false)
+
+  avionId   String?  @db.ObjectId
+  avion     aviones? @relation(fields: [avionId], references: [id])
+  
+  tripulacionAsignada vuelosTripulantes[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model aviones {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  modelo    String
+  capacidad Int
+  estado    AvionEstado @default(DISPONIBLE)
+
+  vuelos    vuelos[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model tripulantes {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  nombre    String
+  rol       String
+
+  vuelosAsignados vuelosTripulantes[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model vuelosTripulantes {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  vueloId       String       @db.ObjectId
+  vuelo         vuelos       @relation(fields: [vueloId], references: [id])
+  
+  tripulanteId  String       @db.ObjectId
+  tripulante    tripulantes  @relation(fields: [tripulanteId], references: [id])
+}
+
+model User {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  nombreusuario  String   @unique
+  password       String
+  role           UserRole
+  createdAt      DateTime @default(now())
+}
