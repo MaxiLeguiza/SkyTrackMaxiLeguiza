@@ -59,13 +59,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               Iniciar Sesión
             </Button>
           </form>
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg space-y-2 text-sm">
-            <p className="font-semibold">Credenciales de prueba:</p>
-            <div className="space-y-1 text-gray-700">
-              <p>👤 <span className="font-medium">Admin:</span> admin / password</p>
-              <p>👤 <span className="font-medium">Operador:</span> operador / password</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
