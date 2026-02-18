@@ -71,11 +71,3 @@ cd backend && npm test && npm run test:e2e
 
 ---
 
-## Notas rápidas
-- Los E2E usan `test/jest-e2e.json` — asegúrate de que `moduleNameMapper` esté correcto si ves errores de import.
-- Las rutas protegidas requieren JWT; el script `prisma/create-admin.ts` crea un admin por defecto (`admin@example.com` / `password123`).
-- Si algún test falla, revisa los logs en consola y ejecuta el test afectado en modo `-i` para depurar.
-
----
-
-Si quieres, agrego un script npm en `backend/package.json` para ejecutar unit+e2e con un único comando. ¿Lo agrego?
