@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { VuelosModule } from './vuelos/vuelos.module';
 import { AvionesModule } from './aviones/aviones.module';
 import { TripulantesModule } from './tripulantes/tripulantes.module';
+import { VuelosTripulantesModule } from './vuelos-tripulantes/vuelos-tripulantes.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
     VuelosModule,
     AvionesModule,
     TripulantesModule,
+    VuelosTripulantesModule,
     UsuariosModule,
     PrismaModule,
     AuthModule,

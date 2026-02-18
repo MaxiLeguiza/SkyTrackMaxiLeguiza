@@ -7,36 +7,37 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorator/roles.decorator';
 import { AuthService } from '../auth.service';
-
+import { UserRole } from 'src/common/enums';
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private authService: AuthService,
-  ) {}
+  constructor(private reflector: Reflector) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
-    if (!requiredRoles) return true;
-
-    const request = context.switchToHttp().getRequest();
-    const { username, password } = request.headers;
-
-    if (!username || !password) {
-      throw new ForbiddenException('Credenciales requeridas');
+    if (!requiredRoles) {
+      return true;
     }
 
-    const user = await this.authService.validateUser(username, password);
+    const { user } = context.switchToHttp().getRequest();
 
-    if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('No tenés permisos');
+    if (!user || !user.roles) {
+      throw new ForbiddenException('No autenticado o rol no asignado.');
     }
 
-    request.user = user;
+    const hasPermission = requiredRoles.some((role) =>
+      user.roles.includes(role),
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'No tiene los permisos necesarios para acceder a este recurso.',
+      );
+    }
+
     return true;
   }
 }

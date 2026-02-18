@@ -1,68 +1,80 @@
 datasource db {
   provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 enum VuelosEstados {
-  PROGRAMADO
-  EMBARCADO
-  EN_VUELO
-  ATERRIZADO
-  CANCELADO
+  programado
+  embarcado
+  en_vuelo
+  aterrizado
+  cancelado
 }
 
 enum AvionEstado {
-  DISPONIBLE
-  EN_VUELO
-  MANTENIMIENTO
+  disponible
+  en_vuelo
+  en_mantenimiento
 }
 
 enum UserRole {
-  ADMIN
-  OPERADOR
+  admin
+  operador
 }
 
 model vuelos {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  origen    String
-  destino   String
-  estado    VuelosEstados
-  deleted   Boolean  @default(false)
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  numeroVuelo   String? 
+  origen        String
+  destino       String
+  fechaSalida   String?
+  horaSalida    String?
+  fechaLlegada  String?
+  horaLlegada   String?
+  estado        VuelosEstados
+  deleted       Boolean  @default(false)
 
-  avionId   String?  @db.ObjectId
-  avion     aviones? @relation(fields: [avionId], references: [id])
+  avionId       String?  @db.ObjectId
+  avion         aviones? @relation(fields: [avionId], references: [id])
   
   tripulacionAsignada vuelosTripulantes[]
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model aviones {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  modelo    String
-  capacidad Int
-  estado    AvionEstado @default(DISPONIBLE)
+id String @id @default(auto()) @map("_id") @db.ObjectId
+modelo String
+matricula String
+capacidad Int
+fabricante String
+estado AvionEstado @default(disponible)
+deleted Boolean @default(false)
 
-  vuelos    vuelos[]
+vuelos vuelos[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 model tripulantes {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  nombre    String
-  rol       String
+id String @id @default(auto()) @map("_id") @db.ObjectId
+nombre String
+apellido String
+rol String
+licencia String
+disponible Boolean @default(true)
+deleted Boolean @default(false)
 
-  vuelosAsignados vuelosTripulantes[]
+vuelosAsignados vuelosTripulantes[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 model vuelosTripulantes {

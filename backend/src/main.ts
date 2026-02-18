@@ -1,17 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Reflector } from '@nestjs/core';
-import { RolesGuard } from './auth/guards/roles.guard';
-import { AuthService } from './auth/auth.service';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const reflector = app.get(Reflector);
-  const authService = app.get(AuthService);
-
-  app.useGlobalGuards(new RolesGuard(reflector, authService));
-
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
+  app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(process.env.PORT ?? 3000);
 }
 
